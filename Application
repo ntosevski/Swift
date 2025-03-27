@@ -1,0 +1,51 @@
+import SwiftUI
+
+// Defining the hurricane data as a string
+struct HurricaneData: Codable {
+    let hurricanes: [String]
+}
+// This struct is given for free by apple when opening a new playgrounds file
+struct ContentView: View {
+    @State private var hurricanes: [String] = []
+    
+    var body: some View {
+        VStack {
+            Text("Hurricane Data")
+                .shadow(color: Color.blue,radius: /*@START_MENU_TOKEN@*/10/*@END_MENU_TOKEN@*/)
+                .font(.title)
+                .padding()
+            
+            Button("Load Hurricanes") { // calling the function "LoadHurricaneData()" when pressed the button
+                loadHurricaneData()
+                
+            }
+            
+            .padding()
+            .shadow(color: Color.red,radius: 10)
+            .background(Color.gray)
+            .foregroundColor(.white)
+            // List() to print each hurricane in order.
+            List(hurricanes, id: \.self) { hurricane in
+                Text(hurricane)
+            }
+        }
+        .padding()
+    }
+    
+    // Just like in Python, you can call upon opening and reading a JSON file from the playgrounds resources through a function.
+    // This code is used in Github / stackoverflow, referenced under the report using the json decoder.
+    func loadHurricaneData() {
+        if let url =  Bundle.main.url(forResource: "hurricane", withExtension: "json") { 
+            do {
+                let data = try Data(contentsOf: url)
+                let decodedData = try JSONDecoder().decode(HurricaneData.self, from: data)
+                hurricanes = decodedData.hurricanes
+            } catch { // Implementing error handling if the JSON file isnt in the right directory
+                print("Error loading JSON: \(error)")
+            }
+        } else { // Error handling and ending the code if the file is not found.
+            print("File not found in Resources folder")
+        }
+    }
+}
+//End of the simple document design and implementation
